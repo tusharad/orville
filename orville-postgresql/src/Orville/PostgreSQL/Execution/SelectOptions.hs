@@ -30,14 +30,13 @@ module Orville.PostgreSQL.Execution.SelectOptions
 where
 
 import Data.Monoid (First (First, getFirst))
-
 import qualified Orville.PostgreSQL.Expr as Expr
 
 {- |
-   A 'SelectOptions' is a set of options that can be used to change the way
-   a basic query function works by adding @WHERE@, @ORDER BY@, @GROUP BY@, etc.
-   Functions are provided to construct 'SelectOptions' for individual options,
-   which may then be combined via '<>' (also exposed as 'appendSelectOptions').
+  A 'SelectOptions' is a set of options that can be used to change the way
+  a basic query function works by adding @WHERE@, @ORDER BY@, @GROUP BY@, etc.
+  Functions are provided to construct 'SelectOptions' for individual options,
+  which may then be combined via '<>' (also exposed as 'appendSelectOptions').
 
 @since 1.0.0.0
 -}
@@ -61,7 +60,7 @@ instance Monoid SelectOptions where
   mempty = emptySelectOptions
 
 {- |
-  A set of empty 'SelectOptions' that will not change how a query is run.
+ A set of empty 'SelectOptions' that will not change how a query is run.
 
 @since 1.0.0.0
 -}
@@ -79,9 +78,9 @@ emptySelectOptions =
     }
 
 {- |
-  Combines multple select options together, unioning the options together where
-  possible. For options where this is not possible (e.g. @LIMIT@), the one
-  on the left is preferred.
+ Combines multple select options together, unioning the options together where
+ possible. For options where this is not possible (e.g. @LIMIT@), the one
+ on the left is preferred.
 
 @since 1.0.0.0
 -}
@@ -106,8 +105,8 @@ unionMaybeWith f mbLeft mbRight =
     (Just left, Just right) -> Just (f left right)
 
 {- |
-  Builds the 'Expr.SelectClause' that should be used to include the
-  'distinct's from the 'SelectOptions' on a query.
+ Builds the 'Expr.SelectClause' that should be used to include the
+ 'distinct's from the 'SelectOptions' on a query.
 
 @since 1.0.0.0
 -}
@@ -118,9 +117,9 @@ selectDistinct selectOptions =
     _ -> Expr.selectClause $ Expr.selectExpr Nothing
 
 {- |
-  Builds the 'Expr.WhereClause' that should be used to include the
-  'Expr.BooleanExpr's from the 'SelectOptions' on a query. This will be 'Nothing'
-  when no 'Expr.BooleanExpr's have been specified.
+ Builds the 'Expr.WhereClause' that should be used to include the
+ 'Expr.BooleanExpr's from the 'SelectOptions' on a query. This will be 'Nothing'
+ when no 'Expr.BooleanExpr's have been specified.
 
 @since 1.0.0.0
 -}
@@ -129,7 +128,7 @@ selectWhereClause =
   fmap Expr.whereClause . i_whereCondition
 
 {- |
-  Constructs a 'SelectOptions' with just 'distinct' set to 'True'.
+ Constructs a 'SelectOptions' with just 'distinct' set to 'True'.
 
 @since 1.0.0.0
 -}
@@ -140,9 +139,9 @@ distinct =
     }
 
 {- |
-  Builds the 'Expr.OrderByClause' that should be used to include the
-  'Expr.OrderByClause's from the 'SelectOptions' on a query. This will be
-  'Nothing' when no 'Expr.OrderByClause's have been specified.
+ Builds the 'Expr.OrderByClause' that should be used to include the
+ 'Expr.OrderByClause's from the 'SelectOptions' on a query. This will be
+ 'Nothing' when no 'Expr.OrderByClause's have been specified.
 
 @since 1.0.0.0
 -}
@@ -151,9 +150,9 @@ selectOrderByClause =
   fmap Expr.orderByClause . i_orderBy
 
 {- |
-  Builds the 'Expr.GroupByClause' that should be used to include the
-  'Expr.GroupByClause's from the 'SelectOptions' on a query. This will be
-  'Nothing' when no 'Expr.GroupByClause's have been specified.
+ Builds the 'Expr.GroupByClause' that should be used to include the
+ 'Expr.GroupByClause's from the 'SelectOptions' on a query. This will be
+ 'Nothing' when no 'Expr.GroupByClause's have been specified.
 
 @since 1.0.0.0
 -}
@@ -162,8 +161,8 @@ selectGroupByClause =
   fmap Expr.groupByClause . i_groupByExpr
 
 {- |
-  Builds a 'Expr.LimitExpr' that will limit the query results to the
-  number specified in the 'SelectOptions' (if any).
+ Builds a 'Expr.LimitExpr' that will limit the query results to the
+ number specified in the 'SelectOptions' (if any).
 
 @since 1.0.0.0
 -}
@@ -172,8 +171,8 @@ selectLimitExpr =
   getFirst . i_limitExpr
 
 {- |
-  Builds an 'Expr.OffsetExpr' that will limit the query results to the
-  number specified in the 'SelectOptions' (if any).
+ Builds an 'Expr.OffsetExpr' that will limit the query results to the
+ number specified in the 'SelectOptions' (if any).
 
 @since 1.0.0.0
 -}
@@ -182,7 +181,7 @@ selectOffsetExpr =
   getFirst . i_offsetExpr
 
 {- |
-  Builds an 'Expr.RowLockingClause' that will apply the locking rules specified in the 'SelectOptions' (if any).
+ Builds an 'Expr.RowLockingClause' that will apply the locking rules specified in the 'SelectOptions' (if any).
 
 @since 1.1.0.0
 -}
@@ -191,7 +190,7 @@ selectRowLockingClause =
   getFirst . i_rowLockingClause
 
 {- |
-  Builds an 'Expr.WindowClause' that will apply the windowing rules specified in the 'SelectOptions' (if any).
+ Builds an 'Expr.WindowClause' that will apply the windowing rules specified in the 'SelectOptions' (if any).
 
 @since 1.1.0.0
 -}
@@ -200,7 +199,7 @@ selectWindowClause =
   fmap Expr.windowClause . i_windowExpr
 
 {- |
-  Constructs a 'SelectOptions' with just the given 'Expr.BooleanExpr'.
+ Constructs a 'SelectOptions' with just the given 'Expr.BooleanExpr'.
 
 @since 1.0.0.0
 -}
@@ -211,7 +210,7 @@ where_ condition =
     }
 
 {- |
-  Constructs a 'SelectOptions' with just the given 'Expr.OrderByExpr'.
+ Constructs a 'SelectOptions' with just the given 'Expr.OrderByExpr'.
 
 @since 1.0.0.0
 -}
@@ -222,7 +221,7 @@ orderBy order =
     }
 
 {- |
-  Constructs a 'SelectOptions' that will apply the given limit.
+ Constructs a 'SelectOptions' that will apply the given limit.
 
 @since 1.0.0.0
 -}
@@ -233,7 +232,7 @@ limit limitValue =
     }
 
 {- |
-  Constructs a 'SelectOptions' that will apply the given offset.
+ Constructs a 'SelectOptions' that will apply the given offset.
 
 @since 1.0.0.0
 -}
@@ -244,7 +243,7 @@ offset offsetValue =
     }
 
 {- |
-  Constructs a 'SelectOptions' with just the given 'Expr.GroupByExpr'.
+ Constructs a 'SelectOptions' with just the given 'Expr.GroupByExpr'.
 
 @since 1.0.0.0
 -}
@@ -255,7 +254,7 @@ groupBy groupByExpr =
     }
 
 {- |
-  Constructs a 'SelectOptions' with just the given 'Expr.RowLockingClause'.
+ Constructs a 'SelectOptions' with just the given 'Expr.RowLockingClause'.
 
 @since 1.1.0.0
 -}
@@ -266,7 +265,7 @@ forRowLock rowLockingClause =
     }
 
 {- |
-  Constructs a 'SelectOptions' with just the given 'Expr.NamedWindowDefinitionExpr'.
+ Constructs a 'SelectOptions' with just the given 'Expr.NamedWindowDefinitionExpr'.
 
 @since 1.1.0.0
 -}
@@ -277,19 +276,19 @@ window namedWindow =
     }
 
 {- |
-  Builds a 'Expr.QueryExpr' that will use the specified 'Expr.SelectList' when
-  building the @SELECT@ statement to execute. It is up to the caller to make
-  sure that the 'Expr.SelectList' expression makes sense for the table being
-  queried, and that the names of the columns in the result set match those
-  expected by the 'Orville.PostgreSQL.SqlMarshaller' that is ultimately used to
-  decode it.
+ Builds a 'Expr.QueryExpr' that will use the specified 'Expr.SelectList' when
+ building the @SELECT@ statement to execute. It is up to the caller to make
+ sure that the 'Expr.SelectList' expression makes sense for the table being
+ queried, and that the names of the columns in the result set match those
+ expected by the 'Orville.PostgreSQL.SqlMarshaller' that is ultimately used to
+ decode it.
 
-  This function is useful for building more advanced queries that need to
-  select things other than simple columns from the table, such as using
-  aggregate functions. The 'Expr.SelectList' can be built however the caller
-  desires. If Orville does not support building the 'Expr.SelectList' you need
-  using any of the expression-building functions, you can resort to
-  @RawSql.fromRawSql@ as an escape hatch to build the 'Expr.SelectList' here.
+ This function is useful for building more advanced queries that need to
+ select things other than simple columns from the table, such as using
+ aggregate functions. The 'Expr.SelectList' can be built however the caller
+ desires. If Orville does not support building the 'Expr.SelectList' you need
+ using any of the expression-building functions, you can resort to
+ @RawSql.fromRawSql@ as an escape hatch to build the 'Expr.SelectList' here.
 
 @since 1.0.0.0
 -}

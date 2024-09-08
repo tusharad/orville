@@ -219,6 +219,7 @@ module Orville.PostgreSQL
   , FieldDefinition.utcTimestampField
   , FieldDefinition.localTimestampField
   , FieldDefinition.jsonbField
+  , FieldDefinition.arrayIntField
   , FieldDefinition.fieldOfType
   , FieldDefinition.fieldColumnName
   , FieldDefinition.fieldColumnReference
@@ -408,6 +409,9 @@ module Orville.PostgreSQL
 
     -- * Json type
   , SqlType.jsonb
+
+    -- * Array type
+  , SqlType.arrayInt
 
     -- * Type conversions
   , SqlType.foreignRefType

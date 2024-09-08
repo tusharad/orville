@@ -49,6 +49,8 @@ module Orville.PostgreSQL.Marshall.SqlType
   , foreignRefType
   , convertSqlType
   , tryConvertSqlType
+  -- Array
+  , arrayInt
   )
 where
 
@@ -414,6 +416,18 @@ oid =
     , sqlTypeMaximumLength = Nothing
     , sqlTypeToSql = \(LibPQ.Oid (CTypes.CUInt word)) -> SqlValue.fromWord32 word
     , sqlTypeFromSql = fmap (LibPQ.Oid . CTypes.CUInt) . SqlValue.toWord32
+    , sqlTypeDontDropImplicitDefaultDuringMigrate = False
+    }
+
+arrayInt :: Maybe Int32 -> SqlType [Int32]
+arrayInt mLen =
+  SqlType
+    { sqlTypeExpr = Expr.arrayInt mLen
+    , sqlTypeReferenceExpr = Nothing
+    , sqlTypeOid = LibPQ.Oid 1007
+    , sqlTypeMaximumLength = Nothing
+    , sqlTypeToSql = SqlValue.fromIntArray
+    , sqlTypeFromSql = SqlValue.toIntArray
     , sqlTypeDontDropImplicitDefaultDuringMigrate = False
     }
 

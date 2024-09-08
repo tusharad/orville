@@ -51,6 +51,9 @@ module Orville.PostgreSQL.Raw.SqlValue
   , fromRow
   , fromRawBytes
   , fromRawBytesNullable
+  , fromArray
+  , fromIntArray
+  , toIntArray
   )
 where
 
@@ -479,6 +482,19 @@ toUTCTime :: SqlValue -> Either String Time.UTCTime
 toUTCTime =
   toParsedValue PgTime.utcTime
 
+fromArray :: Show a => [a] -> SqlValue
+fromArray lst =
+  SqlValue . PgTextFormatValue.fromByteString $
+    TextEnc.encodeUtf8 (T.pack showArray)
+ where
+  showArray = "{" <> mconcat (map (\x -> show x <> ",") lst) <> "}"
+
+fromIntArray :: [Int32] -> SqlValue
+fromIntArray = fromArray
+
+toIntArray :: SqlValue -> Either String [Int32]
+toIntArray = toParsedValue parseIntList
+
 {- |
   Construct a 'SqlValue' representing a Postgres row value comprising the values in the list.
 
@@ -548,3 +564,12 @@ toBytesValue byteParser sqlValue =
         result
       Left err ->
         Left $ "Failed to decode PostgreSQL value as " <> Typeable.showsTypeRep typeRepOfA (": " <> err)
+
+-- Can parse {1,2,3}
+parseIntList :: AttoB8.Parser [Int32]
+parseIntList = do
+  _ <- AttoB8.char '{'
+  nums <- AttoB8.signed AttoB8.decimal `AttoB8.sepBy` AttoB8.char ','
+  _ <- AttoB8.char '}'
+  AttoB8.skipSpace
+  return nums

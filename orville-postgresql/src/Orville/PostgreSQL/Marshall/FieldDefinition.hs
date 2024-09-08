@@ -103,6 +103,7 @@ module Orville.PostgreSQL.Marshall.FieldDefinition
   , getFieldDefinition
   , getAlias
   , buildAliasedFieldDefinition
+  , arrayIntField
   )
 where
 
@@ -681,6 +682,12 @@ uuidField ::
   String ->
   FieldDefinition NotNull UUID.UUID
 uuidField = fieldOfType SqlType.uuid
+
+arrayIntField ::
+  Maybe Int32 ->
+  String ->
+  FieldDefinition NotNull [Int32]
+arrayIntField l = fieldOfType (SqlType.arrayInt l)
 
 {- |
   Builds a 'FieldDefinition' that will use the given 'SqlType.SqlType' to

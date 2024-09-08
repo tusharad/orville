@@ -26,6 +26,7 @@ module Orville.PostgreSQL.Expr.DataType
   , smallint
   , jsonb
   , oid
+  , arrayInt
   )
 where
 
@@ -260,3 +261,10 @@ more information.
 oid :: DataType
 oid =
   DataType (RawSql.fromString "OID")
+
+arrayInt :: Maybe Int32 -> DataType
+arrayInt mLen =
+  DataType $
+    RawSql.fromString "int["
+      <> maybe (RawSql.fromString "") RawSql.int32DecLiteral mLen
+      <> RawSql.fromString "]"
