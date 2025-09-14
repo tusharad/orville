@@ -51,6 +51,8 @@ module Orville.PostgreSQL.Raw.SqlValue
   , fromRow
   , fromRawBytes
   , fromRawBytesNullable
+  , fromVector
+  , toVector
   )
 where
 
@@ -61,6 +63,7 @@ import qualified Data.ByteString as BS
 import qualified Data.ByteString.Builder as BSB
 import qualified Data.ByteString.Lazy as LBS
 import Data.Int (Int16, Int32, Int64, Int8)
+import Data.List (intercalate)
 import qualified Data.List.NonEmpty as NE
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as TextEnc
@@ -514,3 +517,48 @@ toBytesValue byteParser sqlValue =
         result
       Left err ->
         Left $ "Failed to decode PostgreSQL value as " <> Typeable.showsTypeRep typeRepOfA (": " <> err)
+
+-- | Convert a vector to SQL value
+toVector :: NE.NonEmpty Double -> SqlValue
+toVector vec =
+  let
+    vectorStr = "[" <> intercalate "," (fmap show (NE.toList vec)) <> "]"
+  in
+    fromText (T.pack vectorStr)
+
+-- | Convert SQL value to vector
+fromVector :: SqlValue -> Either String (NE.NonEmpty Double)
+fromVector sqlVal = do
+  textVal <- toText sqlVal
+  case parseVector textVal of
+    Left err -> Left err
+    Right vec -> Right vec
+
+-- | Parse a vector string like "[1.0,2.0,3.0]"
+parseVector :: T.Text -> Either String (NE.NonEmpty Double)
+parseVector txt = do
+  let
+    trimmed = T.strip txt
+  if not (T.head trimmed == '[' && T.last trimmed == ']')
+    then Left "Vector must start with '[' and end with ']'"
+    else do
+      let
+        content = T.init (T.tail trimmed) -- Remove [ and ]
+      let
+        parts = T.splitOn "," content
+      if null parts
+        then Left "Vector cannot be empty"
+        else do
+          let
+            doubles = mapM readDouble parts
+          case doubles of
+            Left err -> Left err
+            Right [] -> Left "Vector cannot be empty"
+            Right lst -> Right $ NE.fromList lst
+
+-- | Read a double from string, handling whitespace
+readDouble :: T.Text -> Either String Double
+readDouble txt =
+  case reads (T.unpack $ T.strip txt) of
+    [(d, "")] -> Right d
+    _ -> Left ("Invalid double: " ++ T.unpack txt)

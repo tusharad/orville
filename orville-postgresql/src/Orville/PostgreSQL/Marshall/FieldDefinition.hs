@@ -91,6 +91,8 @@ module Orville.PostgreSQL.Marshall.FieldDefinition
   , boundedTextField
   , fixedTextField
   , textSearchVectorField
+  , vectorField
+  , vectorFieldWithDimension
   , dateField
   , utcTimestampField
   , localTimestampField
@@ -113,6 +115,7 @@ import qualified Data.ByteString.Char8 as B8
 import qualified Data.Coerce as Coerce
 import Data.Int (Int16, Int32, Int64)
 import Data.List.NonEmpty (NonEmpty ((:|)))
+import qualified Data.List.NonEmpty as NEL
 import qualified Data.Text as T
 import qualified Data.Time as Time
 import qualified Data.UUID as UUID
@@ -592,6 +595,22 @@ fixedTextField name len = fieldOfType (SqlType.fixedText len) name
 -}
 textSearchVectorField :: String -> FieldDefinition NotNull T.Text
 textSearchVectorField = fieldOfType SqlType.textSearchVector
+
+{- | Builds a 'FieldDefinition' that stores Haskell 'NEL.NonEmpty Double' values as the
+  PostgreSQL "VECTOR(1536)" type.
+
+@since 1.1.0.0
+-}
+vectorField :: String -> FieldDefinition NotNull (NEL.NonEmpty Double)
+vectorField = fieldOfType SqlType.vector
+
+{- | Builds a 'FieldDefinition' that stores Haskell 'NEL.NonEmpty Double' values as the
+  PostgreSQL "VECTOR(n)" type with a specific dimension.
+
+@since 1.1.0.0
+-}
+vectorFieldWithDimension :: String -> Int32 -> FieldDefinition NotNull (NEL.NonEmpty Double)
+vectorFieldWithDimension name dimension = fieldOfType (SqlType.vectorWithDimension dimension) name
 
 {- | Builds a 'FieldDefinition' that stores Haskell 'T.Text' values as the
   PostgreSQL "JSONB" type.

@@ -26,6 +26,7 @@ module Orville.PostgreSQL.Expr.DataType
   , smallint
   , jsonb
   , oid
+  , vector
   )
 where
 
@@ -258,3 +259,17 @@ more information.
 oid :: DataType
 oid =
   DataType (RawSql.fromString "OID")
+
+{- | A 'DataType' that represents the pgvector "VECTOR(n)" data type.
+
+See [pgvector documentation](https://github.com/pgvector/pgvector) for
+more information.
+
+@since 1.1.0.0
+-}
+vector :: Int32 -> DataType
+vector dimension =
+  DataType $
+    RawSql.fromString "VECTOR("
+      <> RawSql.int32DecLiteral dimension
+      <> RawSql.fromString ")"

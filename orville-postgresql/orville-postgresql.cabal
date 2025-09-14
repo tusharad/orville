@@ -151,6 +151,7 @@ library
       Orville.PostgreSQL.Expr.Internal.Name.TableName
       Orville.PostgreSQL.Expr.Internal.Name.TriggerName
       Orville.PostgreSQL.Expr.Internal.Name.WindowName
+      Orville.PostgreSQL.Extension.PgVector
       Orville.PostgreSQL.Internal.Bracket
       Orville.PostgreSQL.Internal.Extra.NonEmpty
       Orville.PostgreSQL.Internal.FieldName

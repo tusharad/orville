@@ -397,6 +397,26 @@ module Orville.PostgreSQL
   , ExtensionIdentifier.extensionIdName
   , ExtensionIdentifier.extensionIdToString
 
+    -- * PgVector extension functions
+  , PgVector.vectorField
+  , PgVector.vectorFieldWithDimension
+  , PgVector.vector
+  , PgVector.vectorWithDimension
+  , PgVector.l2Distance
+  , PgVector.negativeInnerProduct
+  , PgVector.cosineDistance
+  , PgVector.l1Distance
+  , PgVector.hammingDistance
+  , PgVector.jaccardDistance
+  , PgVector.l2DistanceSyntheticField
+  , PgVector.negativeInnerProductSyntheticField
+  , PgVector.cosineDistanceSyntheticField
+  , PgVector.l1DistanceSyntheticField
+  , PgVector.hammingDistanceSyntheticField
+  , PgVector.jaccardDistanceSyntheticField
+  , PgVector.mkNamedVectorHnswIndexDefinition
+  , PgVector.mkNamedVectorIvfflatIndexDefinition
+
     -- * Numeric types
   , SqlType.integer
   , SqlType.serial
@@ -452,6 +472,7 @@ import qualified Orville.PostgreSQL.Execution.SelectOptions as SelectOptions
 import qualified Orville.PostgreSQL.Execution.Sequence as Sequence
 import qualified Orville.PostgreSQL.Execution.Transaction as Transaction
 import qualified Orville.PostgreSQL.Expr as Expr
+import qualified Orville.PostgreSQL.Extension.PgVector as PgVector
 import qualified Orville.PostgreSQL.Marshall as Marshall
 import qualified Orville.PostgreSQL.Marshall.DefaultValue as DefaultValue
 import qualified Orville.PostgreSQL.Marshall.FieldDefinition as FieldDefinition

@@ -45,6 +45,9 @@ module Orville.PostgreSQL.Marshall.SqlType
   , jsonb
   -- postgresql types
   , oid
+  -- vector types
+  , vector
+  , vectorWithDimension
   -- type conversions
   , foreignRefType
   , convertSqlType
@@ -53,6 +56,7 @@ module Orville.PostgreSQL.Marshall.SqlType
 where
 
 import Data.Int (Int16, Int32, Int64)
+import qualified Data.List.NonEmpty as NEL
 import Data.Text (Text)
 import qualified Data.Time as Time
 import qualified Data.UUID as UUID
@@ -470,3 +474,26 @@ tryConvertSqlType bToA aToB sqlType =
 convertSqlType :: (b -> a) -> (a -> b) -> SqlType a -> SqlType b
 convertSqlType bToA aToB =
   tryConvertSqlType bToA (Right . aToB)
+
+{- | 'vector' defines a vector type with default dimension (1536). This corresponds to the "VECTOR(1536)" type in pgvector.
+
+@since 1.1.0.0
+-}
+vector :: SqlType (NEL.NonEmpty Double)
+vector = vectorWithDimension 1536
+
+{- | 'vectorWithDimension' defines a vector type with a specific dimension. This corresponds to the "VECTOR(n)" type in pgvector.
+
+@since 1.1.0.0
+-}
+vectorWithDimension :: Int32 -> SqlType (NEL.NonEmpty Double)
+vectorWithDimension dimension =
+  SqlType
+    { sqlTypeExpr = Expr.vector dimension
+    , sqlTypeReferenceExpr = Nothing
+    , sqlTypeOid = LibPQ.Oid 16945 --TODO: Need to double check this value
+    , sqlTypeMaximumLength = Nothing
+    , sqlTypeToSql = SqlValue.toVector
+    , sqlTypeFromSql = SqlValue.fromVector
+    , sqlTypeDontDropImplicitDefaultDuringMigrate = False
+    }
